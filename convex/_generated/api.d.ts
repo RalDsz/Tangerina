@@ -13,7 +13,8 @@ import type {
   FilterApi,
   FunctionReference,
 } from "convex/server";
-import type * as scans from "../scans.js";
+import type * as ocr from "../ocr.js";
+import type * as ocrActions from "../ocrActions.js";
 
 /**
  * A utility for referencing Convex functions in your app's API.
@@ -24,7 +25,8 @@ import type * as scans from "../scans.js";
  * ```
  */
 declare const fullApi: ApiFromModules<{
-  scans: typeof scans;
+  ocr: typeof ocr;
+  ocrActions: typeof ocrActions;
 }>;
 export declare const api: FilterApi<
   typeof fullApi,

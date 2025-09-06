@@ -15,7 +15,7 @@ export async function getFileDownloadUrl(
   fileId: Id<"_storage"> | string
 ): Promise<DownloadResult> {
   try {
-    const downloadUrl = await convex.query(api.scans.getScanDownloadUrl, {
+    const downloadUrl = await convex.query(api.ocr.getScanDownloadUrl, {
       fileId: fileId as Id<"_storage">,
     });
 

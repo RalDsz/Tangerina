@@ -1,4 +1,12 @@
-import { Inngest } from "inngest";
+import { serve } from "inngest/next";
+import { inngest } from "../../../inngest/inngest";
+import { extractAndSavePDF } from "@/inngest/agent";
 
-// Create a client to send and receive events
-export const inngest = new Inngest({ id: "tangerina-lemon-build" });
+// Create an API that serves zero functions
+export const { GET, POST, PUT } = serve({
+  client: inngest,
+  functions: [
+    extractAndSavePDF
+    /* your functions will be passed here later! */
+  ],
+}); 

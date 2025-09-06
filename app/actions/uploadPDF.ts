@@ -9,9 +9,9 @@ import type { Doc } from "@/convex/_generated/dataModel";
 type UploadResult = {
   success: boolean;
   message: string;
-  scan?: Doc<"scans">;
+  scan?: Doc<"ocrResults">;
   data?: {
-    scan: Doc<"scans">;
+    scan: Doc<"ocrResults">;
     filename: string;
   };
 };
@@ -40,7 +40,7 @@ export async function uploadPDF(formData: FormData): Promise<UploadResult> {
     }
 
     // ✅ Generate Convex upload URL
-    const uploadUrl = await convex.mutation(api.scans.generateUploadUrl, {});
+    const uploadUrl = await convex.mutation(api.ocr.generateUploadUrl, {});
     if (!uploadUrl || typeof uploadUrl !== "string") {
       return { success: false, message: "Failed to generate upload URL" };
     }
@@ -67,7 +67,7 @@ export async function uploadPDF(formData: FormData): Promise<UploadResult> {
 
     const { storageId } = json;
 
-    const scan = await convex.mutation(api.scans.storeScan, {
+    const scan = await convex.mutation(api.ocr.storeScan, {
   fileId: storageId,
   fileName: file.name,
   size: file.size,
@@ -79,9 +79,13 @@ export async function uploadPDF(formData: FormData): Promise<UploadResult> {
       return { success: false, message: "Failed to store scan metadata" };
     }
 
-    // const fileUrl = await getFileDownloadUrl(storageId);
-
-    //TODO:trigger Inngest agentic flow to process the file
+    // Trigger OCR processing
+    try {
+      await convex.mutation(api.ocr.runOCR, { fileId: storageId });
+    } catch (ocrError) {
+      console.error("Failed to trigger OCR:", ocrError);
+      // Don't fail the upload if OCR trigger fails
+    }
 
     return {
       success: true,
